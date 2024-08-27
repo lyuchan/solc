@@ -64,7 +64,16 @@
     <script>
         let currentNumber;
         let isFlipped = false;
-
+        var params = new URLSearchParams(new URL(window.location.href).search);
+        let card_id = params.get('card_id');
+        function firstloadCard() {
+            if (card_id == undefined) {
+                loadCard();
+            } else {
+                currentNumber = card_id;
+                document.getElementById('cardImage').src = `front/${card_id}.png`;
+            }
+        }
         function getRandomNumber() {
             return Math.floor(Math.random() * 100) + 1;
         }
@@ -85,7 +94,7 @@
         }
 
         function shareCard() {
-            const imageUrl = document.getElementById('cardImage').src;
+            const imageUrl = `https://life-source-card.vercel.app/?card_id=${currentNumber}`;
             const title = '生命泉源卡';
             const text = '我抽到了這張生命泉源卡，來看看吧！';
 
@@ -100,13 +109,11 @@
                     console.log('分享失敗:', error);
                 });
             } else {
-                // 如果瀏覽器不支持 Web Share API，提供備用方案
-                const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(imageUrl)}`;
-                window.open(shareUrl, '_blank');
+                alert('分享失敗');
             }
         }
 
-        window.onload = loadCard;
+        window.onload = firstloadCard;
     </script>
 </body>
 
