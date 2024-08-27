@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生命泉源卡抽取</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        #cardContainer {
+            text-align: center;
+        }
+
+        #cardImage {
+            max-width: 300px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        #cardImage:hover {
+            transform: scale(1.05);
+        }
+
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        #drawButton {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cardContainer">
+        <h1>生命泉源卡</h1>
+        <img id="cardImage" src="" alt="生命泉源卡" onclick="flipCard()">
+        <br>
+        <button id="drawButton" class="button" onclick="loadCard()">再抽一張</button>
+        <button id="shareButton" class="button" onclick="shareCard()">分享</button>
+    </div>
+
+    <script>
+        let currentNumber;
+        let isFlipped = false;
+
+        function getRandomNumber() {
+            return Math.floor(Math.random() * 100) + 1;
+        }
+
+        function loadCard() {
+            currentNumber = getRandomNumber();
+            document.getElementById('cardImage').src = `front/${currentNumber}.png`;
+            isFlipped = false;
+        }
+
+        function flipCard() {
+            if (isFlipped) {
+                document.getElementById('cardImage').src = `front/${currentNumber}.png`;
+            } else {
+                document.getElementById('cardImage').src = `back/${currentNumber}.png`;
+            }
+            isFlipped = !isFlipped;
+        }
+
+        function shareCard() {
+            const imageUrl = document.getElementById('cardImage').src;
+            const title = '生命泉源卡';
+            const text = '我抽到了這張生命泉源卡，來看看吧！';
+
+            if (navigator.share) {
+                navigator.share({
+                    title: title,
+                    text: text,
+                    url: imageUrl
+                }).then(() => {
+                    console.log('分享成功');
+                }).catch((error) => {
+                    console.log('分享失敗:', error);
+                });
+            } else {
+                // 如果瀏覽器不支持 Web Share API，提供備用方案
+                const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(imageUrl)}`;
+                window.open(shareUrl, '_blank');
+            }
+        }
+
+        window.onload = loadCard;
+    </script>
+</body>
+
+</html>
