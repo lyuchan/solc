@@ -133,7 +133,7 @@
         function firstloadCard() {
             if (card_id == undefined) {
                 loadCard();
-                document.getElementById("drawButton").innerText = "再抽一張";
+
             } else {
                 document.getElementById("drawButton").innerText = "我也要抽";
                 currentNumber = card_id;
@@ -147,6 +147,7 @@
         }
 
         function loadCard() {
+            document.getElementById("drawButton").innerText = "再抽一張";
             const card = document.querySelector('.card');
             const newNumber = getRandomNumber();
 
