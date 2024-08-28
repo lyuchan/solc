@@ -38,7 +38,7 @@
         .card-face {
             position: absolute;
             width: 100%;
-            height: 100%;
+            /*height: 100%;*/
             backface-visibility: hidden;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
@@ -102,6 +102,22 @@
             z-index: 1000;
             display: none;
         }
+
+        .swal2-popup {
+            font-size: 0.8rem;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            margin: 0;
+        }
+
+        #drawnCardsInfo {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+            display: none;
+            /* 預設隱藏 */
+        }
     </style>
 </head>
 
@@ -118,8 +134,9 @@
         </div>
         <p id="flipHint">點擊卡片來翻牌</p>
         <br>
-        <button id="drawButton" class="button" onclick="loadCard()">抽抽抽抽</button>
+        <button id="drawButton" class="button" onclick="loadCard()">再抽一張</button>
         <button id="shareButton" class="button" onclick="shareCard()">分享</button>
+        <div id="drawnCardsInfo"></div>
     </div>
 
     <!-- 引入 SweetAlert2 JavaScript -->
@@ -130,42 +147,103 @@
         var params = new URLSearchParams(new URL(window.location.href).search);
         let card_id = params.get('card_id');
 
+        const skippedNumbers = [38, 40, 56, 73, 98];
+        const devMode = false; // 設置為 true 啟用開發模式，false 為正常模式
+
         function firstloadCard() {
             if (card_id == undefined) {
                 loadCard();
-
             } else {
                 document.getElementById("drawButton").innerText = "我也要抽";
                 currentNumber = card_id;
                 setCardImages(currentNumber);
             }
             showPopupHint();
+            updateDrawnCardsInfo();
+            toggleDevModeFeatures(); // 新增這行
         }
 
         function getRandomNumber() {
-            return Math.floor(Math.random() * 100) + 1;
+            let number;
+            do {
+                number = Math.floor(Math.random() * 100) + 1;
+            } while (skippedNumbers.includes(number));
+            return number;
         }
 
         function loadCard() {
-            document.getElementById("drawButton").innerText = "再抽一張";
-            const card = document.querySelector('.card');
-            const newNumber = getRandomNumber();
+            if (canDrawCard()) {
+                document.getElementById("drawButton").innerText = "再抽一張";
+                const newNumber = getRandomNumber();
+                updateCard(newNumber);
+                incrementDrawCount();
+                addToDrawnCards(newNumber);
+            } else {
+                showLimitReachedMessage();
+                const drawnCards = getDrawnCards();
+                if (drawnCards.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * drawnCards.length);
+                    const newNumber = drawnCards[randomIndex];
+                    updateCard(newNumber);
+                }
+            }
+            updateDrawnCardsInfo();
+        }
 
-            // 如果卡片當前是翻轉狀態，先翻回正面
+        function updateCard(newNumber) {
+            const card = document.querySelector('.card');
             if (isFlipped) {
                 card.classList.remove('flipped');
                 isFlipped = false;
-
-                // 等待翻轉動畫完成後更換卡片
                 setTimeout(() => {
                     currentNumber = newNumber;
                     setCardImages(currentNumber);
-                }, 200); // 800ms 是翻轉動畫的持續時間
+                }, 200);
             } else {
-                // 如果卡片已經在正面，直接更換
                 currentNumber = newNumber;
                 setCardImages(currentNumber);
             }
+        }
+
+        function canDrawCard() {
+            const now = new Date();
+            const lastDrawTime = localStorage.getItem('lastDrawTime');
+            if (!lastDrawTime) return true;
+
+            const timeDiff = now - new Date(lastDrawTime);
+            const limitTime = devMode ? 10000 : 24 * 60 * 60 * 1000; // 10秒 或 24小時
+            return timeDiff >= limitTime;
+        }
+
+        function incrementDrawCount() {
+            localStorage.setItem('lastDrawTime', new Date().toISOString());
+        }
+
+        function addToDrawnCards(number) {
+            const drawnCards = getDrawnCards();
+            if (!drawnCards.includes(number)) {
+                drawnCards.push(number);
+                localStorage.setItem('drawnCards', JSON.stringify(drawnCards));
+            }
+        }
+
+        function getDrawnCards() {
+            const drawnCards = localStorage.getItem('drawnCards');
+            return drawnCards ? JSON.parse(drawnCards) : [];
+        }
+
+        function showLimitReachedMessage() {
+            const limitTime = devMode ? '10秒' : '24小時';
+            Swal.fire({
+                title: '抽取次數已達上限',
+                text: `從已抽取過的卡片中隨機選擇一張。請等待${limitTime}後再次抽取新卡片。`,
+                icon: 'info',
+                toast: true,
+                position: 'bottom-start',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true
+            });
         }
 
         function setCardImages(number) {
@@ -179,7 +257,9 @@
         }
 
         function shareCard() {
-            const imageUrl = `https://lyuchan.com/solc/?card_id=${currentNumber}`;
+            const frontImageUrl = `front/${currentNumber}.png`;
+            const backImageUrl = `back/${currentNumber}.png`;
+            const shareUrl = `https://life-source-card.vercel.app/?card_id=${currentNumber}`;
             const title = '生命泉源卡';
             const text = '我抽到了這張生命泉源卡，來看看吧！';
 
@@ -187,15 +267,42 @@
                 navigator.share({
                     title: title,
                     text: text,
-                    url: imageUrl
+                    url: shareUrl
                 }).then(() => {
                     console.log('分享成功');
                 }).catch((error) => {
                     console.log('分享失敗:', error);
+                    showSaveOptions(frontImageUrl, backImageUrl);
                 });
             } else {
-                alert('分享失敗');
+                showSaveOptions(frontImageUrl, backImageUrl);
             }
+        }
+
+        function showSaveOptions(frontImageUrl, backImageUrl) {
+            Swal.fire({
+                title: '儲存圖片',
+                html: `
+                    <img src="${frontImageUrl}" alt="正面" style="width: 45%; margin-right: 5%;">
+                    <img src="${backImageUrl}" alt="背面" style="width: 45%;">
+                    <br><br>
+                    <button onclick="saveImage('${frontImageUrl}', '正面')" class="swal2-confirm swal2-styled" style="width: 45%; margin-right: 5%;">儲存正面</button>
+                    <button onclick="saveImage('${backImageUrl}', '背面')" class="swal2-confirm swal2-styled" style="width: 45%;">儲存背面</button>
+                `,
+                showConfirmButton: false,
+                showCloseButton: true,
+                focusConfirm: false,
+                allowOutsideClick: true
+            });
+        }
+
+        function saveImage(imageUrl, side) {
+            const link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = `生命泉源卡_${side}_${currentNumber}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         function showPopupHint() {
@@ -211,6 +318,27 @@
                         localStorage.setItem('hintShown', 'true');
                     }
                 });
+            }
+        }
+
+        function updateDrawnCardsInfo() {
+            const drawnCards = getDrawnCards();
+            const infoElement = document.getElementById('drawnCardsInfo');
+            if (drawnCards.length > 0) {
+                drawnCards.sort((a, b) => a - b);
+                infoElement.textContent = `已抽過的卡片號碼：${drawnCards.join(', ')}`;
+            } else {
+                infoElement.textContent = '還沒有抽過卡片';
+            }
+        }
+
+        // 新增這個函數
+        function toggleDevModeFeatures() {
+            const infoElement = document.getElementById('drawnCardsInfo');
+            if (devMode) {
+                infoElement.style.display = 'block';
+            } else {
+                infoElement.style.display = 'none';
             }
         }
 
