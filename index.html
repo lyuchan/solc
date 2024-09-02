@@ -102,7 +102,7 @@
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
-            background-color: #4CAF50;
+            background-color: #7367f0;
             color: white;
             border: none;
             border-radius: 5px;
@@ -110,7 +110,7 @@
         }
 
         .button:hover {
-            background-color: #45a049;
+            background-color: #8d85e7;
         }
 
         #drawButton {
@@ -230,9 +230,10 @@
                 document.getElementById("drawButton").innerText = "再抽一張";
                 const newNumber = getRandomNumber();
                 updateCard(newNumber);
-                if (!isSharedLink()) {
+                
+                /* if (!isSharedLink()) {
                     incrementDrawCount();
-                }
+                }*/
                 addToDrawnCards(newNumber);
             } else {
                 showLimitReachedMessage();
