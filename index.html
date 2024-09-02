@@ -233,13 +233,19 @@
                 document.getElementById("drawButton").innerText = "再抽一張";
                 const newNumber = getRandomNumber();
                 updateCard(newNumber);
-                
-                 if (!isSharedLink()) {
+
+                if (!isSharedLink()) {
                     incrementDrawCount();
                 }
                 addToDrawnCards(newNumber);
             } else {
                 showLimitReachedMessage();
+                const drawnCards = getDrawnCards();
+                if (drawnCards.length > 0) {
+                    //const randomIndex = Math.floor(Math.random() * drawnCards.length);
+                    const newNumber = drawnCards[drawnCards.length - 1];
+                    updateCard(newNumber);
+                }
             }
             updateDrawnCardsInfo();
         }
