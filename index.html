@@ -4,9 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>生命泉源卡抽取</title>
+    <title>生命泉源卡Fountain of Living Water</title>
     <!-- 引入 SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+    <!-- 引入 Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+
     <style>
         body {
             display: flex;
@@ -15,11 +20,18 @@
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
-            perspective: 1000px;
+            /*perspective: 1000px;*/
+            font-family: 'Noto Serif TC', serif;
         }
 
+
         #cardContainer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
+            height: 100vh;
         }
 
         .card {
@@ -33,6 +45,22 @@
 
         .card.flipped {
             transform: rotateY(180deg);
+        }
+
+        .card.draw-animation {
+            animation: drawCard 1s ease-in-out;
+        }
+
+        @keyframes drawCard {
+            0% {
+                transform: scale(0.5) rotate(0deg);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
         }
 
         .card-face {
@@ -63,8 +91,14 @@
             transform: rotateY(180deg);
         }
 
+        .button-container {
+            display: flex;
+            justify-content: center;
+            /*margin-top: 20px;*/
+        }
+
         .button {
-            margin-top: 20px;
+            margin: 0 10px;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
@@ -103,14 +137,6 @@
             display: none;
         }
 
-        .swal2-popup {
-            font-size: 0.8rem;
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            margin: 0;
-        }
-
         #drawnCardsInfo {
             margin-top: 20px;
             font-size: 14px;
@@ -118,12 +144,34 @@
             display: none;
             /* 預設隱藏 */
         }
+
+        .title {
+            font-size: 3em;
+            /* 中文標題較大 */
+            margin: 0;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            /* 英文標題較小 */
+            margin: 0;
+            /* padding-bottom: 20px;*/
+        }
+
+        .subsubtitle {
+            font-size: 1em;
+            /* 英文標題較小 */
+            margin: 0;
+            padding-bottom: 20px;
+        }
     </style>
 </head>
 
 <body>
     <div id="cardContainer">
-        <h1>生命泉源卡</h1>
+        <h1 class="title">生命泉源卡</h1>
+        <h2 class="subtitle">Fountain of Living Water</h2>
+        <h2 class="subsubtitle">盼望這張卡片讓你感受到天父對你的愛與祝福<br>You are blessed!</h2>
         <div class="card" onclick="flipCard()">
             <div class="card-face card-front">
                 <img src="" alt="生命泉源卡正面">
@@ -132,10 +180,13 @@
                 <img src="" alt="生命泉源卡背面">
             </div>
         </div>
-        <p id="flipHint">點擊卡片來翻牌</p>
+        <p id="flipHint">點擊卡片來翻面</p>
         <br>
-        <button id="drawButton" class="button" onclick="loadCard()">再抽一張</button>
-        <button id="shareButton" class="button" onclick="shareCard()">分享</button>
+        <div class="button-container">
+            <button id="drawButton" class="button" onclick="loadCard()">更新卡片</button>
+            <button id="shareButton" class="button" onclick="shareCard()">分享</button>
+            <button id="historyButton" class="button" onclick="viewHistory()">查看歷史生命泉源卡</button>
+        </div>
         <div id="drawnCardsInfo"></div>
     </div>
 
@@ -149,6 +200,9 @@
 
         const skippedNumbers = [38, 40, 56, 73, 98];
         const devMode = false; // 設置為 true 啟用開發模式，false 為正常模式
+
+        let drawCount = localStorage.getItem('drawCount') ? parseInt(localStorage.getItem('drawCount')) : 0;
+        let lastDrawDate = localStorage.getItem('lastDrawDate') ? new Date(localStorage.getItem('lastDrawDate')) : new Date(0);
 
         function firstloadCard() {
             if (card_id == undefined) {
@@ -176,7 +230,9 @@
                 document.getElementById("drawButton").innerText = "再抽一張";
                 const newNumber = getRandomNumber();
                 updateCard(newNumber);
-                incrementDrawCount();
+                if (!isSharedLink()) {
+                    incrementDrawCount();
+                }
                 addToDrawnCards(newNumber);
             } else {
                 showLimitReachedMessage();
@@ -207,16 +263,16 @@
 
         function canDrawCard() {
             const now = new Date();
-            const lastDrawTime = localStorage.getItem('lastDrawTime');
-            if (!lastDrawTime) return true;
-
-            const timeDiff = now - new Date(lastDrawTime);
-            const limitTime = devMode ? 10000 : 24 * 60 * 60 * 1000; // 10秒 或 24小時
-            return timeDiff >= limitTime;
+            if (isNewDay(now)) {
+                resetDrawCount();
+            }
+            return drawCount < 2 || isSharedLink();
         }
 
         function incrementDrawCount() {
-            localStorage.setItem('lastDrawTime', new Date().toISOString());
+            drawCount++;
+            localStorage.setItem('drawCount', drawCount);
+            localStorage.setItem('lastDrawDate', new Date().toISOString());
         }
 
         function addToDrawnCards(number) {
@@ -234,16 +290,27 @@
 
         function showLimitReachedMessage() {
             const limitTime = devMode ? '10秒' : '24小時';
+            const now = new Date();
+            const remainingTime = getRemainingTime(now);
             Swal.fire({
-                title: '抽取次數已達上限',
-                text: `從已抽取過的卡片中隨機選擇一張。請等待${limitTime}後再次抽取新卡片。`,
-                icon: 'info',
-                toast: true,
-                position: 'bottom-start',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true
+                html: `
+                    <div style="text-align: center;">
+                        <p style="font-size: 1.3em;margin-top: 30px;margin-bottom: 0px;">更新卡片次數達到上限了歐!<br>明天還有新的祝福等你來領取!</p>
+                        <p style="font-size: 0.7em;margin-top: 5px;">請等待${remainingTime}後再次開啟這個網頁</p>
+                    </div>
+                `,
+                confirmButtonText: '知道了',
+                position: 'center'
             });
+        }
+
+        function getRemainingTime(now) {
+            const nextDay = new Date(now);
+            nextDay.setHours(24, 0, 0, 0); // 設置為明天的午夜
+            const diffMs = nextDay - now;
+            const diffHrs = Math.floor((diffMs % 86400000) / 3600000); // 小時
+            const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // 分鐘
+            return `${diffHrs}小時${diffMins}分鐘`;
         }
 
         function setCardImages(number) {
@@ -259,7 +326,7 @@
         function shareCard() {
             const frontImageUrl = `front/${currentNumber}.png`;
             const backImageUrl = `back/${currentNumber}.png`;
-            const shareUrl = `https://life-source-card.vercel.app/?card_id=${currentNumber}`;
+            const shareUrl = `https://lyuchan.com/solc/?card_id=${currentNumber}`;
             const title = '生命泉源卡';
             const text = '我抽到了這張生命泉源卡，來看看吧！';
 
@@ -306,19 +373,18 @@
         }
 
         function showPopupHint() {
-            if (!localStorage.getItem('hintShown')) {
-                Swal.fire({
-                    title: '歡迎使用生命泉源卡！',
-                    text: '點擊卡片來翻牌，查看卡片的正面和背面。',
-                    icon: 'info',
-                    confirmButtonText: '知道了',
-                    allowOutsideClick: false
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        localStorage.setItem('hintShown', 'true');
-                    }
-                });
-            }
+            const now = new Date();
+            const remainingTime = getRemainingTime(now);
+            Swal.fire({
+                html: `
+                    <div style="text-align: center;">
+                        <p>因為你那裡有生命的泉源<br>在你的光中<br>我們必得見光<br>For you are the fountain of life<br>the light by which we see<br>Psalms 36:9</p>
+                        <hr style="border: 1px solid #000; margin: 20px 0;">
+                        <p style="font-size: 1.2em;">點擊卡片查看背面<br>每天更新次數最多兩次<br>上帝祝福你!</p>
+                    </div>
+                `,
+                confirmButtonText: '知道了'
+            });
         }
 
         function updateDrawnCardsInfo() {
@@ -332,7 +398,6 @@
             }
         }
 
-        // 新增這個函數
         function toggleDevModeFeatures() {
             const infoElement = document.getElementById('drawnCardsInfo');
             if (devMode) {
@@ -340,6 +405,25 @@
             } else {
                 infoElement.style.display = 'none';
             }
+        }
+
+        function isNewDay(now) {
+            return now.toDateString() !== lastDrawDate.toDateString();
+        }
+
+        function resetDrawCount() {
+            drawCount = 0;
+            localStorage.setItem('drawCount', drawCount);
+            lastDrawDate = new Date();
+            localStorage.setItem('lastDrawDate', lastDrawDate.toISOString());
+        }
+
+        function isSharedLink() {
+            return card_id !== null;
+        }
+
+        function viewHistory() {
+            window.location.href = 'history.html';
         }
 
         window.onload = firstloadCard;
