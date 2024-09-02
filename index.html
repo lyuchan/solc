@@ -197,6 +197,7 @@
         let isFlipped = false;
         var params = new URLSearchParams(new URL(window.location.href).search);
         let card_id = params.get('card_id');
+        let showPopup = params.get('showPopup') === 'true';
 
         const skippedNumbers = [38, 40, 56, 73, 98];
         const devMode = false; // 設置為 true 啟用開發模式，false 為正常模式
@@ -207,12 +208,14 @@
         function firstloadCard() {
             if (card_id == undefined) {
                 loadCard();
+                if (showPopup) {
+                    showPopupHint();
+                }
             } else {
                 document.getElementById("drawButton").innerText = "我也要抽";
                 currentNumber = card_id;
                 setCardImages(currentNumber);
             }
-            showPopupHint();
             updateDrawnCardsInfo();
             toggleDevModeFeatures(); // 新增這行
         }
@@ -231,9 +234,9 @@
                 const newNumber = getRandomNumber();
                 updateCard(newNumber);
                 
-                /* if (!isSharedLink()) {
+                 if (!isSharedLink()) {
                     incrementDrawCount();
-                }*/
+                }
                 addToDrawnCards(newNumber);
             } else {
                 showLimitReachedMessage();
@@ -426,6 +429,14 @@
         function viewHistory() {
             window.location.href = 'history.html';
         }
+
+        document.getElementById("drawButton").onclick = () => {
+            if (card_id !== null) {
+                window.location.href = 'https://lyuchan.com/solc?showPopup=true';
+            } else {
+                loadCard();
+            }
+        };
 
         window.onload = firstloadCard;
     </script>
