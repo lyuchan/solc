@@ -12,11 +12,17 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
             font-family: 'Noto Sans TC', sans-serif;
+            overflow-y: auto; /* 允許垂直滾動 */
+        }
+
+        .title {
+            font-size: 2em;
+            margin: 20px 0;
         }
 
         .card-container {
@@ -24,6 +30,9 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
+            padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .card {
@@ -39,11 +48,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-
-        .title {
-            font-size: 2em;
-            margin-bottom: 20px;
         }
     </style>
 </head>
