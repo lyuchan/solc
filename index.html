@@ -240,12 +240,6 @@
                 addToDrawnCards(newNumber);
             } else {
                 showLimitReachedMessage();
-                const drawnCards = getDrawnCards();
-                if (drawnCards.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * drawnCards.length);
-                    const newNumber = drawnCards[randomIndex];
-                    updateCard(newNumber);
-                }
             }
             updateDrawnCardsInfo();
         }
@@ -331,8 +325,8 @@
             const frontImageUrl = `front/${currentNumber}.png`;
             const backImageUrl = `back/${currentNumber}.png`;
             const shareUrl = `https://lyuchan.com/solc/?card_id=${currentNumber}`;
-            const title = '生命泉源卡';
-            const text = '我抽到了這張生命泉源卡，來看看吧！';
+            const title = '我想跟你分享天父的祝福！\nYou are blessed💛';
+            const text = '我想跟你分享天父的祝福！\nYou are blessed💛';
 
             if (navigator.share) {
                 navigator.share({
