@@ -146,13 +146,13 @@
         }
 
         .title {
-            font-size: 3em;
+            font-size: 2.7em;
             /* 中文標題較大 */
             margin: 0;
         }
 
         .subtitle {
-            font-size: 1.5em;
+            font-size: 1.2em;
             /* 英文標題較小 */
             margin: 0;
             /* padding-bottom: 20px;*/
@@ -185,7 +185,7 @@
         <div class="button-container">
             <button id="drawButton" class="button" onclick="loadCard()">更新卡片</button>
             <button id="shareButton" class="button" onclick="shareCard()">分享</button>
-            <button id="historyButton" class="button" onclick="viewHistory()">歷史卡片</button>
+
         </div>
         <div id="drawnCardsInfo"></div>
     </div>
@@ -270,7 +270,7 @@
             if (isNewDay(now)) {
                 resetDrawCount();
             }
-            return drawCount < 2 || isSharedLink();
+            return drawCount < 3 || isSharedLink();
         }
 
         function incrementDrawCount() {
