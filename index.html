@@ -552,7 +552,8 @@
                     console.log('分享失敗:', error);
                 });
             } else {
-                alert('分享失敗');
+                const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(imageUrl)}`;
+                window.open(shareUrl, '_blank');
             }
         }
 
