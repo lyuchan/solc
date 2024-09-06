@@ -520,7 +520,7 @@
             const title = '我想跟你分享天父的祝福';
             const text = '我想跟你分享天父的祝福You are blessed';
 
-            if (navigator.share) {
+           
                 navigator.share({
                     title: title,
                     text: text,
@@ -535,9 +535,7 @@
                     });
                     //  showSaveOptions(frontImageUrl, backImageUrl);
                 });
-            } else {
-                // showSaveOptions(frontImageUrl, backImageUrl);
-            }
+           
         }
 
         function showSaveOptions(frontImageUrl, backImageUrl) {
