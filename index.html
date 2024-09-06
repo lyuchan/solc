@@ -512,7 +512,20 @@
             document.querySelector('.card').classList.toggle('flipped');
             isFlipped = !isFlipped;
         }
+        async function shareCard() {
+            const shareData = {
+                title: "我想跟你分享天父的祝福",
+                text: "我想跟你分享天父的祝福You are blessed",
+                url: `https://lyuchan.com/solc/?card_id=${currentNumber}`,
+            };
 
+            try {
+                await navigator.share(shareData);
+                resultPara.textContent = "MDN shared successfully";
+            } catch (err) {
+                resultPara.textContent = `Error: ${err}`;
+            }
+        }
         /* function shareCard() {
              const shareUrl = `https://lyuchan.com/solc/?card_id=${currentNumber}`;
              const title = '我想跟你分享天父的祝福';
@@ -536,7 +549,7 @@
                  //  showSaveOptions(frontImageUrl, backImageUrl);
              });
  
-         }*/
+         }
         function shareCard() {
             const imageUrl = `https://life-source-card.vercel.app/?card_id=${currentNumber}`;
             const title = '生命泉源卡';
@@ -554,7 +567,7 @@
             } else {
                 alert('分享失敗');
             }
-        }
+        }*/
 
 
         function showPopupHint() {
