@@ -538,7 +538,7 @@
  
          }*/
         function shareCard() {
-            const imageUrl = `https://lyuchan.com/solc/?card_id=${currentNumber}`;
+            const imageUrl = `https://life-source-card.vercel.app/?card_id=${currentNumber}`;
             const title = '生命泉源卡';
             const text = '我抽到了這張生命泉源卡，來看看吧！';
             if (navigator.share) {
@@ -552,11 +552,9 @@
                     console.log('分享失敗:', error);
                 });
             } else {
-                const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(imageUrl)}`;
-                window.open(shareUrl, '_blank');
+                alert('分享失敗');
             }
         }
-
 
 
         function showPopupHint() {
