@@ -523,7 +523,13 @@
             try {
                 await navigator.share(shareData);
             } catch (err) {
+                Swal.fire({
+                    title: '分享失敗',
+                    text: err,
+                    confirmButtonText: '知道了'
+                });
             }
+
         }
 
         function showPopupHint() {
