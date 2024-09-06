@@ -526,9 +526,13 @@
                     text: text,
                     url: shareUrl
                 }).then(() => {
-                    console.log('分享成功');
+
                 }).catch((error) => {
-                    console.log('分享失敗:', error);
+                    Swal.fire({
+                        title: '分享失敗',
+                        text: error,
+                        confirmButtonText: '知道了'
+                    });
                     //  showSaveOptions(frontImageUrl, backImageUrl);
                 });
             } else {
