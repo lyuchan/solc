@@ -513,56 +513,50 @@
             isFlipped = !isFlipped;
         }
 
+        /* function shareCard() {
+             const shareUrl = `https://lyuchan.com/solc/?card_id=${currentNumber}`;
+             const title = '我想跟你分享天父的祝福';
+             const text = '我想跟你分享天父的祝福You are blessed';
+             navigator.share({
+                 title: title,
+                 text: text,
+                 url: shareUrl
+             }).then(() => {
+                 Swal.fire({
+                     title: '分享成功',
+                     text: "",
+                     confirmButtonText: '知道了'
+                 });
+             }).catch((error) => {
+                 Swal.fire({
+                     title: '分享失敗',
+                     text: error,
+                     confirmButtonText: '知道了'
+                 });
+                 //  showSaveOptions(frontImageUrl, backImageUrl);
+             });
+ 
+         }*/
         function shareCard() {
-            const shareUrl = `https://lyuchan.com/solc/?card_id=${currentNumber}`;
-            const title = '我想跟你分享天父的祝福';
-            const text = '我想跟你分享天父的祝福You are blessed';
-            navigator.share({
-                title: title,
-                text: text,
-                url: shareUrl
-            }).then(() => {
-                Swal.fire({
-                    title: '分享成功',
-                    text: "",
-                    confirmButtonText: '知道了'
+            const imageUrl = `https://lyuchan.com/solc/?card_id=${currentNumber}`;
+            const title = '生命泉源卡';
+            const text = '我抽到了這張生命泉源卡，來看看吧！';
+            if (navigator.share) {
+                navigator.share({
+                    title: title,
+                    text: text,
+                    url: imageUrl
+                }).then(() => {
+                    console.log('分享成功');
+                }).catch((error) => {
+                    console.log('分享失敗:', error);
                 });
-            }).catch((error) => {
-                Swal.fire({
-                    title: '分享失敗',
-                    text: error,
-                    confirmButtonText: '知道了'
-                });
-                //  showSaveOptions(frontImageUrl, backImageUrl);
-            });
-
+            } else {
+                alert('分享失敗');
+            }
         }
 
-        function showSaveOptions(frontImageUrl, backImageUrl) {
-            Swal.fire({
-                title: '儲存圖片',
-                html: `
-                    <img src="${frontImageUrl}" alt="正面" style="width: 45%; margin-right: 5%;">
-                    <img src="${backImageUrl}" alt="背面" style="width: 45%;">
-                    <br><br>
-                    <button onclick="saveImage('${frontImageUrl}', '正面')" class="swal2-confirm swal2-styled" style="width: 45%; margin-right: 5%;">儲存正面</button>
-                    <button onclick="saveImage('${backImageUrl}', '背面')" class="swal2-confirm swal2-styled" style="width: 45%;">儲存背面</button>
-                `,
-                showConfirmButton: false,
-                showCloseButton: true,
-                focusConfirm: false,
-                allowOutsideClick: true
-            });
-        }
 
-        function saveImage(imageUrl, side) {
-            const link = document.createElement('a');
-            link.href = imageUrl;
-            link.download = `生命泉源卡_${side}_${currentNumber}.png`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
 
         function showPopupHint() {
             const now = new Date();
