@@ -222,10 +222,8 @@
 
         function firstloadCard() {
             if (card_id == undefined) {
+                showPopupHint();
                 loadCard();
-                if (showPopup) {
-                    showPopupHint();
-                }
             } else {
                 document.getElementById("drawButton").innerText = "我也要抽";
                 currentNumber = card_id;
@@ -346,7 +344,7 @@
             const frontImageUrl = `front/${currentNumber}.png`;
             const backImageUrl = `back/${currentNumber}.png`;
             const shareUrl = `https://lyuchan.com/solc/?card_id=${currentNumber}`;
-            const title = '我想跟你分享天父的祝福！You are blessed💛';
+            const title = '我想跟你分享天父的祝福！';
             const text = '我想跟你分享天父的祝福！\nYou are blessed💛';
 
             if (navigator.share) {
