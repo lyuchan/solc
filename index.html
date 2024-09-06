@@ -431,6 +431,7 @@
                     //const randomIndex = Math.floor(Math.random() * drawnCards.length);
                     const newNumber = drawnCards[drawnCards.length - 1];
                     updateCard(newNumber);
+                    currentNumber = newNumber;
                 }
             }
             updateDrawnCardsInfo();
@@ -515,60 +516,15 @@
         async function shareCard() {
             const shareData = {
                 title: "我想跟你分享天父的祝福",
-                text: "我想跟你分享天父的祝福You are blessed",
-                url: `https://lyuchan.com/solc/`,
+                text: "我想跟你分享天父的祝福!\nYou are blessed💛",
+                url: `https://lyuchan.com/solc/?card_id=${currentNumber}`,
             };
 
             try {
                 await navigator.share(shareData);
-               // resultPara.textContent = "MDN shared successfully";
             } catch (err) {
-               // resultPara.textContent = `Error: ${err}`;
             }
         }
-        /* function shareCard() {
-             const shareUrl = `https://lyuchan.com/solc/?card_id=${currentNumber}`;
-             const title = '我想跟你分享天父的祝福';
-             const text = '我想跟你分享天父的祝福You are blessed';
-             navigator.share({
-                 title: title,
-                 text: text,
-                 url: shareUrl
-             }).then(() => {
-                 Swal.fire({
-                     title: '分享成功',
-                     text: "",
-                     confirmButtonText: '知道了'
-                 });
-             }).catch((error) => {
-                 Swal.fire({
-                     title: '分享失敗',
-                     text: error,
-                     confirmButtonText: '知道了'
-                 });
-                 //  showSaveOptions(frontImageUrl, backImageUrl);
-             });
- 
-         }
-        function shareCard() {
-            const imageUrl = `https://life-source-card.vercel.app/?card_id=${currentNumber}`;
-            const title = '生命泉源卡';
-            const text = '我抽到了這張生命泉源卡，來看看吧！';
-            if (navigator.share) {
-                navigator.share({
-                    title: title,
-                    text: text,
-                    url: imageUrl
-                }).then(() => {
-                    console.log('分享成功');
-                }).catch((error) => {
-                    console.log('分享失敗:', error);
-                });
-            } else {
-                alert('分享失敗');
-            }
-        }*/
-
 
         function showPopupHint() {
             const now = new Date();
