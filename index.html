@@ -517,17 +517,13 @@
             const shareData = {
                 title: "我想跟你分享天父的祝福",
                 text: "我想跟你分享天父的祝福!\nYou are blessed💛",
-                url: `https://lyuchan.com/solc/?card_id=${currentNumber}`,
+                url: `https://lyuchan.com/solc/`,
             };
 
             try {
                 await navigator.share(shareData);
             } catch (err) {
-                Swal.fire({
-                    title: '分享失敗',
-                    text: err,
-                    confirmButtonText: '知道了'
-                });
+
             }
 
         }
