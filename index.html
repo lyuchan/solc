@@ -372,7 +372,7 @@
 
         <div class="button-container">
             <button id="drawButton" class="button" onclick="loadCard()">更新卡片</button>
-            <button id="shareButton" class="button" onclick="shareCard()">分享</button>
+            <button id="shareButton" class="button" onclick="shareCard();">分享</button>
 
         </div>
         <div id="drawnCardsInfo"></div>
@@ -514,8 +514,6 @@
         }
 
         function shareCard() {
-            const frontImageUrl = `front/${currentNumber}.png`;
-            const backImageUrl = `back/${currentNumber}.png`;
             const shareUrl = `https://lyuchan.com/solc/?card_id=${currentNumber}`;
             const title = '我想跟你分享天父的祝福';
             const text = '我想跟你分享天父的祝福You are blessed';
@@ -524,7 +522,11 @@
                 text: text,
                 url: shareUrl
             }).then(() => {
-
+                Swal.fire({
+                    title: '分享成功',
+                    text: "",
+                    confirmButtonText: '知道了'
+                });
             }).catch((error) => {
                 Swal.fire({
                     title: '分享失敗',
