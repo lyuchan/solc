@@ -516,14 +516,14 @@
             const shareData = {
                 title: "我想跟你分享天父的祝福",
                 text: "我想跟你分享天父的祝福You are blessed",
-                url: `https://lyuchan.com/solc/?card_id=${currentNumber}`,
+                url: `https://lyuchan.com/solc/`,
             };
 
             try {
                 await navigator.share(shareData);
-                resultPara.textContent = "MDN shared successfully";
+               // resultPara.textContent = "MDN shared successfully";
             } catch (err) {
-                resultPara.textContent = `Error: ${err}`;
+               // resultPara.textContent = `Error: ${err}`;
             }
         }
         /* function shareCard() {
