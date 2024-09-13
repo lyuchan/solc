@@ -348,6 +348,45 @@
                 padding-bottom: 10px;
             }
         }
+
+        .breath {
+
+            overflow: hidden;
+            background: #ff4800;
+            animation-name: breath;
+            animation-duration: 0.6s;
+            animation-timing-function: ease-in-out;
+            animation-iteration-count: infinite;
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #ff4800;
+            padding: 5px;
+            color: rgb(255, 255, 255);
+            right: 0px;
+            font-size: 1.5em;
+            writing-mode: vertical-rl;
+            text-align: center;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+
+        }
+
+        @keyframes breath {
+            from {
+                background-color: #ff4800;
+            }
+
+            50% {
+                background-color: #f77643;
+            }
+
+            to {
+                background-color: #ff4800;
+            }
+        }
     </style>
 </head>
 
@@ -374,6 +413,9 @@
         <div id="drawnCardsInfo"></div>
     </div>
 
+    <div id="purchaseCard" class="breath">
+        購買實體卡片
+    </div>
     <!-- 引入 SweetAlert2 JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
     <script>
@@ -530,7 +572,7 @@
             Swal.fire({
                 html: `
                     <div style="text-align: center;">
-                       <p style="font-size: 1.2em; color: #26241E;">生命泉源卡<br>Spring of Water</p>
+                       <p style="font-size: 1.2em; color: #594a3c;">生命泉源卡<br>Spring of Water</p>
                        <p style="font-size: 1.2em; color: #594a3c;font-weight: bold">每天都有美好的祝福等著你！</p>
                         <hr style="border: 1px solid #000; margin: 20px 0;">
                         <p style="font-size: 1.2em;">點擊卡片查看背面文字<br>每天更新次數最多兩次<br></p>
@@ -588,7 +630,21 @@
                 loadCard();
             }
         };
+        document.getElementById("purchaseCard").onclick = () => {
+            Swal.fire({
+                html: `
+                    <div style="text-align: center;">
+                        <p style="font-size: 1.3em;margin-top: 30px;margin-bottom: 0px;">請加入LINE來購買實體卡片!</p>
+                        <p style="font-size: 1.1em;margin-top: 5px;">請掃描或點擊下方QRcode</p>
+                        <a href="https://lin.ee/lIZteJQ"><img style="width: 300px;"src="https://qr-official.line.me/gs/M_795qmuog_GW.png?oat_content=qr"></a>
 
+                    </div>
+                `,
+                confirmButtonText: '知道了',
+                position: 'center'
+            })
+        };
+        //purchaseCard
         window.onload = firstloadCard;
     </script>
 </body>
